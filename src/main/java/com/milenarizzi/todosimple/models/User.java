@@ -5,14 +5,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-
-import org.springframework.util.ObjectUtils;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
@@ -40,13 +41,23 @@ public class User {
     private String username;
 
     @JsonProperty(access = Access.WRITE_ONLY)
-    @Column(name = "username", length = 60, nullable = false)
+    @Column(name = "password", length = 60, nullable = false)
     @NotNull(groups = { CreateUser.class, UpdateUser.class })
     @NotEmpty(groups = { CreateUser.class, UpdateUser.class })
-    @Size(groups = { CreateUser.class, UpdateUser.class }, min = 2, max = 100)
+    @Size(groups = { CreateUser.class, UpdateUser.class }, min = 8, max = 60)
     private String password;
 
-    // private List<Task> tasks = new ArrayList<Task>();
+    @OneToMany(mappedBy = "user") //um user pode ter várias tarefas
+    //essas tarefas estão sendo mapeadas da variável user lá da classe task
+    private List<Task> tasks = new ArrayList<Task>();
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
+    }
 
     public Long getId() {
         return this.id;
